@@ -14,7 +14,16 @@ class SGA1_API AC_Cube : public AActor
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* Mesh;
+	class USceneComponent*		Root;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USceneComponent*		Child;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* MeshComponent;
+	
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMesh*			CubeMesh;
 
 public:	
 	// Sets default values for this actor's properties
