@@ -12,7 +12,7 @@ namespace CppMacro
 		else Actor->SetRootComponent(Component);
 	}
 
-	static void GetAsset(UStaticMesh*& Asset, const FString Path)
+	static void GetAsset(UStaticMesh*& Asset, const FString& Path)
 	{
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> asset(*Path);
 		
