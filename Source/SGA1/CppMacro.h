@@ -34,10 +34,10 @@ namespace CppMacro
 	template<typename T>
 	static void GetAssetDynamic(T*& AssetObject, const FString& Path)
 	{
-		T obj = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
+		T Obj = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
 
-		//verifyf(obj, L"Succeeded")
-		if (obj) AssetObject = obj;
+		//verifyf(Obj, L"Succeeded")
+		if (Obj) AssetObject = Obj;
 		else UE_LOG(LogTemp, Warning, TEXT("Failed to Get AssetDynamic: %s"), *Path);
 	}
 }

@@ -4,30 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "C_Cube.generated.h"
+#include "C_Ramp.generated.h"
 
 UCLASS()
-class SGA1_API AC_Cube : public AActor
+class SGA1_API AC_Ramp : public AActor
 {
 	GENERATED_BODY()
 	
-
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	class USceneComponent*		Root;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* MeshComponent;
-	
+
 	UPROPERTY(EditDefaultsOnly)
-	class UStaticMesh*			CubeMesh;
+	class UStaticMesh*			RampMesh;
 
 	class UMaterialInstanceConstant*	ConstantMaterial;
 	class UMaterialInstanceDynamic*		DynamicMaterial;
 
 public:	
 	// Sets default values for this actor's properties
-	AC_Cube();
+	AC_Ramp();
 
 protected:
 	// Called when the game starts or when spawned
