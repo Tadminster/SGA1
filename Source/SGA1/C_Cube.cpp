@@ -4,36 +4,21 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 
+#include "CppMacro.h"
+
 // Sets default values
-AC_Cube::AC_Cube() : 
-	Root(CreateDefaultSubobject<USceneComponent>(TEXT("Root"))),
-	Child(CreateDefaultSubobject<USceneComponent>(TEXT("Child"))),
-	MeshComponent(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh")))
+AC_Cube::AC_Cube()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	this->SetRootComponent(Root);
-	Child->SetupAttachment(Root);
-	MeshComponent->SetupAttachment(Child);
-	
+	CppMacro::CreateComponet(this, Root, TEXT("Root"));
+	CppMacro::CreateComponet(this, Child, TEXT("Child"), Root);
+	CppMacro::CreateComponet(this, MeshComponent, TEXT("Mesh"), Child);
+
 	FString MeshPath = TEXT("StaticMesh'/Game/LevelPrototyping/Meshes/SM_ChamferCube.SM_ChamferCube'");
-	// 경로를 통해 에셋 찾기
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> asset(*MeshPath);
-	
-	// 멤버 변수에 에셋을 할당
-	CubeMesh = asset.Object;
-	if (asset.Succeeded()) // 에셋이 존재하면
-	{
-		// 메쉬 컴포넌트에 에셋을 할당
-		MeshComponent->SetStaticMesh(CubeMesh);
-	}
-
-	//if (asset.Succeeded())
-	//{
-		//MeshComponent->SetStaticMesh(asset.Object);
-	//}
-
+	CppMacro::GetAsset(CubeMesh, MeshPath);
+	MeshComponent->SetStaticMesh(CubeMesh);
 }
 
 // Called when the game starts or when spawned
