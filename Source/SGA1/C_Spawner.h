@@ -18,6 +18,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AC_Cube> CubeClass;
 	TSubclassOf<class AC_Ramp> RampClass;
+	TSubclassOf<class AC_Cylinder> CylinderClass;
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,5 +27,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void SpawnCylinder();
 
 };
