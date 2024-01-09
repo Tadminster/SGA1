@@ -22,7 +22,8 @@
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Sets default values
-AC_Character::AC_Character()
+AC_Character::AC_Character():
+	bEquipWeapon(false)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -46,7 +47,7 @@ AC_Character::AC_Character()
 
 	// Animation
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	FString AnimBlueprintPath = TEXT("AnimBlueprint'/Game/Blueprints/ABP_Player.ABP_Player'");
+	FString AnimBlueprintPath = TEXT("AnimBlueprint'/Game/Scene2/ABP_Character.ABP_Character'");
 	CppMacro::GetObject<UAnimBlueprint>(AnimBlueprintAsset, AnimBlueprintPath);
 	GetMesh()->SetAnimInstanceClass(AnimBlueprintAsset->GeneratedClass);
 

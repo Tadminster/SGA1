@@ -24,7 +24,7 @@ protected:
 	USpringArmComponent* SpringArm;
 
 	// Ä«¸Þ¶ó
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UCameraComponent* Camera;
 
 	// MappingContext
@@ -45,6 +45,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UAnimBlueprint* AnimBlueprintAsset;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool bEquipWeapon;
 
 public:
 	// Sets default values for this character's properties
