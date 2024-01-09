@@ -20,7 +20,7 @@ AC_Cylinder::AC_Cylinder()
 	CppMacro::CreateComponet(this, MeshComponent, TEXT("Mesh"), Root);
 
 	FString MeshPath = TEXT("StaticMesh'/Game/LevelPrototyping/Meshes/SM_Cylinder.SM_Cylinder'");
-	CppMacro::GetAsset(CylinderMesh, MeshPath);
+	CppMacro::GetObject(CylinderMesh, MeshPath);
 	MeshComponent->SetStaticMesh(CylinderMesh);
 
 	FString MaterialPath = TEXT("Material'/Game/Characters/Mannequins/Materials/Instances/Manny/M_Mannequin_red_Inst.M_Mannequin_red_Inst'");

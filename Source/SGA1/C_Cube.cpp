@@ -19,7 +19,7 @@ AC_Cube::AC_Cube()
 	CppMacro::CreateComponet(this, MeshComponent, TEXT("Mesh"), Root);
 
 	FString MeshPath = TEXT("StaticMesh'/Game/LevelPrototyping/Meshes/SM_Cube.SM_Cube'");
-	CppMacro::GetAsset(CubeMesh, MeshPath);
+	CppMacro::GetObject(CubeMesh, MeshPath);
 	MeshComponent->SetStaticMesh(CubeMesh);
 
 	FString MaterialPath = TEXT("Material'/Game/Characters/Mannequins/Materials/Instances/Manny/M_Mannequin_red_Inst.M_Mannequin_red_Inst'");

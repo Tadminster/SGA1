@@ -15,19 +15,19 @@ namespace CppMacro
 	template<typename T>
 	static void GetClass(TSubclassOf<T>* OutClass, const FString& Path)
 	{
-		ConstructorHelpers::FClassFinder<T> asset(*Path);
+		ConstructorHelpers::FClassFinder<T> ClassFinder(*Path);
 
 		//verifyf(asset.Succeeded(), L"Succeeded")
-		if (asset.Succeeded()) *OutClass = asset.Class;
+		if (ClassFinder.Succeeded()) *OutClass = ClassFinder.Class;
 		else UE_LOG(LogTemp, Warning, TEXT("Failed to Get Class: %s"), *Path);
 	}
 
-	static void GetAsset(UStaticMesh*& Asset, const FString& Path)
+	template<typename T>
+	static void GetObject(T*& Asset, const FString& Path)
 	{
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> asset(*Path);
-		
-		//verifyf(asset.Succeeded(), L"Succeeded")
-		if (asset.Succeeded()) Asset = asset.Object;
+		ConstructorHelpers::FObjectFinder<T> ObjectFinder(*Path);
+
+		if (ObjectFinder.Succeeded()) Asset = ObjectFinder.Object;
 		else UE_LOG(LogTemp, Warning, TEXT("Failed to Get Asset: %s"), *Path);
 	}
 
