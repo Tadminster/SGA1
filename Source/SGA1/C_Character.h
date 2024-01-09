@@ -5,6 +5,7 @@
 #include "Logging/LogMacros.h"
 #include "C_Character.generated.h"
 
+class USkeletalMesh;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -19,11 +20,15 @@ class SGA1_API AC_Character : public ACharacter
 	GENERATED_BODY()
 
 protected:
-	// 스프링암
+	// SkeletalMesh
+	UPROPERTY(EditDefaultsOnly)
+	USkeletalMesh* SkeletalMesh;
+
+	// SpringArm
 	UPROPERTY(EditDefaultsOnly)
 	USpringArmComponent* SpringArm;
 
-	// 카메라
+	// Camera
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UCameraComponent* Camera;
 
@@ -48,6 +53,11 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool bEquipWeapon;
+
+private:
+	// Sword
+	class AC_Sword* Sword;
+	TSubclassOf<class AC_Sword> SwordClass;
 
 public:
 	// Sets default values for this character's properties

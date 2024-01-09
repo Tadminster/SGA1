@@ -14,8 +14,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-
 #include "InputMappingContext.h"
+
+#include "C_Sword.h"
 
 #include "CppMacro.h"
 
@@ -23,7 +24,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Sets default values
 AC_Character::AC_Character():
-	bEquipWeapon(false)
+	bEquipWeapon(false),
+	Sword(nullptr)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,12 +38,10 @@ AC_Character::AC_Character():
 	
 	CppMacro::CreateComponet<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
 
-
 	// Skeletal Mesh
-	USkeletalMesh* SkeletalMeshAsset = nullptr;
 	FString MeshPath = TEXT("SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'");
-	CppMacro::GetObject<USkeletalMesh>(SkeletalMeshAsset, MeshPath);
-	GetMesh()->SetSkeletalMesh(SkeletalMeshAsset);
+	CppMacro::GetObject<USkeletalMesh>(SkeletalMesh, MeshPath);
+	GetMesh()->SetSkeletalMesh(SkeletalMesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0)); // Pitch, Yaw, Roll
 
@@ -80,6 +80,11 @@ AC_Character::AC_Character():
 
 	FString LookActionPath = TEXT("InputAction'/Game/Input/IA_Look.IA_Look'");
 	CppMacro::GetObject<UInputAction>(LookAction, LookActionPath);
+
+
+	FString SwordPath = TEXT("Blueprint'/Game/Scene2/BP_Sword.BP_Sword_C'");
+	CppMacro::GetClass<AC_Sword>(&SwordClass, SwordPath);
+
 }
 
 // Called when the game starts or when spawned
@@ -94,6 +99,24 @@ void AC_Character::BeginPlay()
 			= ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
+
+	// Spawn Sword
+	if (SwordClass)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		FVector SpawnLocation = GetActorLocation();
+		FRotator SpawnRotation = GetActorRotation();
+
+		Sword = GetWorld()->SpawnActor<AC_Sword>(SwordClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (Sword)
+		{
+			Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("sheath_thigh_l"));
 		}
 	}
 }
@@ -115,8 +138,6 @@ void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent)
 	 {
-		UE_LOG(LogTemplateCharacter, Log, TEXT("'%s' Found an Enhanced Input component!"), *GetNameSafe(this));
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AC_Character::Move);
 
