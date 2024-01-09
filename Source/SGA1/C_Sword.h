@@ -21,6 +21,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USkeletalMeshComponent*	SkeletalMesh;
 
+public:
+	// attack montages
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	UAnimMontage* AttackMontage;
+
 public:	
 	// Sets default values for this actor's properties
 	AC_Sword();

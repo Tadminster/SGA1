@@ -25,7 +25,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 // Sets default values
 AC_Character::AC_Character():
 	bEquipWeapon(false),
-	Sword(nullptr)
+	Sword(nullptr),
+	AttackStage(0), AttackMaxStage(2)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -81,6 +82,15 @@ AC_Character::AC_Character():
 	FString LookActionPath = TEXT("InputAction'/Game/Input/IA_Look.IA_Look'");
 	CppMacro::GetObject<UInputAction>(LookAction, LookActionPath);
 
+	FString AttackActionPath = TEXT("InputAction'/Game/Input/IA_Attack.IA_Attack'");
+	CppMacro::GetObject<UInputAction>(AttackAction, AttackActionPath);
+
+	FString WalkSlowActionPath = TEXT("InputAction'/Game/Input/IA_WalkSlow.IA_WalkSlow'");
+	CppMacro::GetObject<UInputAction>(WalkSlowAction, WalkSlowActionPath);
+
+	FString WalkFastActionPath = TEXT("InputAction'/Game/Input/IA_WalkFast.IA_WalkFast'");
+	CppMacro::GetObject<UInputAction>(WalkFastAction, WalkFastActionPath);
+
 
 	FString SwordPath = TEXT("Blueprint'/Game/Scene2/BP_Sword.BP_Sword_C'");
 	CppMacro::GetClass<AC_Sword>(&SwordClass, SwordPath);
@@ -117,6 +127,7 @@ void AC_Character::BeginPlay()
 		if (Sword)
 		{
 			Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("sheath_thigh_l"));
+			//Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("sheath_thigh_l"));
 		}
 	}
 }
@@ -134,6 +145,9 @@ void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// '1' 키에 대한 이벤트 처리
+	PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AC_Character::EquipWeapon);
+
 	// Set up action bindings
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent)
@@ -147,6 +161,17 @@ void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AC_Character::Look);
+
+		// Walk Slow
+		EnhancedInputComponent->BindAction(WalkSlowAction, ETriggerEvent::Started, this, &AC_Character::WalkSlow);
+		EnhancedInputComponent->BindAction(WalkSlowAction, ETriggerEvent::Completed, this, &AC_Character::WalkNormal);
+
+		// Walk Fast
+		EnhancedInputComponent->BindAction(WalkFastAction, ETriggerEvent::Started, this, &AC_Character::WalkFast);
+		EnhancedInputComponent->BindAction(WalkFastAction, ETriggerEvent::Completed, this, &AC_Character::WalkNormal);
+
+		// Attack
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AC_Character::Attack);
 	}
 	else
 	{
@@ -194,3 +219,51 @@ void AC_Character::Look(const FInputActionValue& Value)
 	}
 }
 
+void AC_Character::EquipWeapon()
+{
+	if (Sword)
+	{
+		bEquipWeapon = !bEquipWeapon;
+	}
+
+	if (bEquipWeapon)
+	{
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("grabWeapon"));
+	}
+	else
+	{
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("sheath_thigh_l"));
+	}
+}
+
+void AC_Character::WalkSlow(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+}
+
+void AC_Character::WalkNormal(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+}
+
+void AC_Character::WalkFast(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed = 900.f;
+}
+
+
+void AC_Character::Attack(const FInputActionValue& Value)
+{
+	if (Sword && bEquipWeapon)
+	{
+		switch (AttackStage)
+		{
+			case 0: PlayAnimMontage(Sword->AttackMontage, 1.0f, FName("Attack1")); break;
+			case 1: PlayAnimMontage(Sword->AttackMontage, 1.0f, FName("Attack2")); break;
+			case 2: PlayAnimMontage(Sword->AttackMontage, 1.0f, FName("Attack3")); break;
+		}
+
+		if (AttackStage == AttackMaxStage) AttackStage = 0;
+		else AttackStage++;
+	}
+}

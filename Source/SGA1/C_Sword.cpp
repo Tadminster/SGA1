@@ -15,6 +15,10 @@ AC_Sword::AC_Sword()
 
 	CppMacro::CreateComponet(this, Root, TEXT("Root"));
 	CppMacro::CreateComponet(this, SkeletalMesh, TEXT("Mesh"), Root);
+
+	// attack montages
+	FString Path = TEXT("AnimMontage'/Game/Characters/Mannequins/Animations/Manny/AM_SwordAndShield_Attack.AM_SwordAndShield_Attack'");
+	CppMacro::GetObject<UAnimMontage>(AttackMontage, Path);
 }
 
 // Called when the game starts or when spawned

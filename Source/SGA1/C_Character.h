@@ -36,18 +36,31 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* InputMappingContext;
 
-	// Move Input Action
+	// Move IA
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* MoveAction;
 
-	// Move Input Action
+	// Jump IA
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* JumpAction;
 
-	// Look Input Action
+	// Look IA
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* LookAction;
 
+	// WalkSlow IA
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* WalkSlowAction;
+
+	// WalkFast IA
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* WalkFastAction;
+
+	// Attack IA
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AttackAction;
+
+	// ABP
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UAnimBlueprint* AnimBlueprintAsset;
 
@@ -56,6 +69,8 @@ protected:
 
 private:
 	// Sword
+	int32 AttackStage;
+	int32 AttackMaxStage;
 	class AC_Sword* Sword;
 	TSubclassOf<class AC_Sword> SwordClass;
 
@@ -74,9 +89,13 @@ public:
 	// Bind input functions
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Called for movement input
 	void Move(const FInputActionValue& Value);
-
-	// Called for looking input
 	void Look(const FInputActionValue& Value);
+	void WalkSlow(const FInputActionValue& Value);
+	void WalkNormal(const FInputActionValue& Value);
+	void WalkFast(const FInputActionValue& Value);
+	void Attack(const FInputActionValue& Value);
+
+	// Equip Weapon, Unequip Weapon
+	void EquipWeapon();
 };
