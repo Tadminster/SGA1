@@ -5,6 +5,12 @@
 #include "Logging/LogMacros.h"
 #include "C_Character.generated.h"
 
+UENUM(BlueprintType)
+enum class EPlayerWeapon : uint8
+{
+	Unarmed, Sword,
+};
+
 class USkeletalMesh;
 class USpringArmComponent;
 class UCameraComponent;
@@ -67,12 +73,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool bEquipWeapon;
 
+	UPROPERTY(EditDefaultsOnly)
+	EPlayerWeapon PlayerWeapon{ EPlayerWeapon::Unarmed };
+
 private:
 	// Sword
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	int32 AttackStage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	int32 AttackMaxStage;
+
 	class AC_Sword* Sword;
-	TSubclassOf<class AC_Sword> SwordClass;
 
 public:
 	// Sets default values for this character's properties

@@ -91,10 +91,7 @@ AC_Character::AC_Character():
 	FString WalkFastActionPath = TEXT("InputAction'/Game/Input/IA_WalkFast.IA_WalkFast'");
 	CppMacro::GetObject<UInputAction>(WalkFastAction, WalkFastActionPath);
 
-
-	FString SwordPath = TEXT("Blueprint'/Game/Scene2/BP_Sword.BP_Sword_C'");
-	CppMacro::GetClass<AC_Sword>(&SwordClass, SwordPath);
-
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
 
 // Called when the game starts or when spawned
@@ -113,23 +110,7 @@ void AC_Character::BeginPlay()
 	}
 
 	// Spawn Sword
-	if (SwordClass)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = GetInstigator();
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		FVector SpawnLocation = GetActorLocation();
-		FRotator SpawnRotation = GetActorRotation();
-
-		Sword = GetWorld()->SpawnActor<AC_Sword>(SwordClass, SpawnLocation, SpawnRotation, SpawnParams);
-		if (Sword)
-		{
-			Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("sheath_thigh_l"));
-			//Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("sheath_thigh_l"));
-		}
-	}
+	Sword = AC_Sword::Spawn(this);
 }
 
 // Called every frame
@@ -228,11 +209,11 @@ void AC_Character::EquipWeapon()
 
 	if (bEquipWeapon)
 	{
-		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("grabWeapon"));
+		Sword->Equip();
 	}
 	else
 	{
-		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("sheath_thigh_l"));
+		Sword->UnEquip();
 	}
 }
 

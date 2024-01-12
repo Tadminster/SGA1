@@ -19,12 +19,32 @@ protected:
 	USceneComponent* Root;
 
 	UPROPERTY(EditDefaultsOnly)
-	USkeletalMeshComponent*	SkeletalMesh;
+	USkeletalMeshComponent* SkeletalMeshComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	USkeletalMesh* SkeletalMesh;
 
 public:
 	// attack montages
 	UPROPERTY(EditAnywhere, Category = "Anim")
 	UAnimMontage* AttackMontage;
+
+	// equip montages
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	UAnimMontage* EquipMontage;
+
+	// unequip montages
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	UAnimMontage* UnequipMontage;
+
+	UPROPERTY(EditAnywhere)
+	FName HandSocket{ TEXT("grabWeapon") };
+
+	UPROPERTY(EditAnywhere)
+	FName SheathSocket{ TEXT("sheath_thigh_l") };
+
+private:
+	class ACharacter* OwnerCharacter;
 
 public:	
 	// Sets default values for this actor's properties
@@ -35,7 +55,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+	static AC_Sword* Spawn(class ACharacter* Character);
+	void Equip();
+	void UnEquip();
 };
