@@ -8,7 +8,7 @@
 UENUM(BlueprintType)
 enum class EPlayerWeapon : uint8
 {
-	Unarmed, Sword,
+	Unarmed, Sword, Rifle
 };
 
 class USkeletalMesh;
@@ -17,6 +17,9 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+
+class AC_Sword;
+class AC_Rifle;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -66,6 +69,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AttackAction;
 
+	// Press 1 IA
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* Press1Action;
+
+	// Press 2 IA
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* Press2Action;
+
 	// ABP
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UAnimBlueprint* AnimBlueprintAsset;
@@ -78,13 +89,11 @@ protected:
 
 private:
 	// Sword
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	int32 AttackStage;
+	AC_Sword* Sword;
+	AC_Rifle* Rifle;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	int32 AttackMaxStage;
-
-	class AC_Sword* Sword;
+public:
+	int32 AttackStack{ 0 }; // 공격스택
 
 public:
 	// Sets default values for this character's properties
@@ -108,6 +117,19 @@ public:
 	void WalkFast(const FInputActionValue& Value);
 	void Attack(const FInputActionValue& Value);
 
-	// Equip Weapon, Unequip Weapon
-	void EquipWeapon();
+	// Equip & Unequip Sword
+	void EquipSword();
+	void EquipRifle();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool GetbEquipWeapon() const { return bEquipWeapon; };
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE EPlayerWeapon GetPlayerWeaponState() const { return PlayerWeapon; };
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AC_Sword* GetSword() { return Sword; };
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE AC_Rifle* GetRifle() { return Rifle; };
+
+	UFUNCTION(BlueprintCallable)
+	void SetUnarmed();
 };

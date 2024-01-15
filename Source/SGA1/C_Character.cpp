@@ -17,6 +17,7 @@
 #include "InputMappingContext.h"
 
 #include "C_Sword.h"
+#include "C_Rifle.h"
 
 #include "CppMacro.h"
 
@@ -24,9 +25,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Sets default values
 AC_Character::AC_Character():
-	bEquipWeapon(false),
-	Sword(nullptr),
-	AttackStage(0), AttackMaxStage(2)
+	bEquipWeapon(false), 
+	Sword(nullptr)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -91,7 +91,15 @@ AC_Character::AC_Character():
 	FString WalkFastActionPath = TEXT("InputAction'/Game/Input/IA_WalkFast.IA_WalkFast'");
 	CppMacro::GetObject<UInputAction>(WalkFastAction, WalkFastActionPath);
 
+	FString Press1ActionPath = TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Press1.IA_Press1'");
+	CppMacro::GetObject<UInputAction>(Press1Action, Press1ActionPath);
+
+	FString Press2ActionPath = TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Press2.IA_Press2'");
+	CppMacro::GetObject<UInputAction>(Press2Action, Press2ActionPath);
+
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
+
+
 }
 
 // Called when the game starts or when spawned
@@ -111,6 +119,7 @@ void AC_Character::BeginPlay()
 
 	// Spawn Sword
 	Sword = AC_Sword::Spawn(this);
+	Rifle = AC_Rifle::Spawn(this);
 }
 
 // Called every frame
@@ -124,10 +133,11 @@ void AC_Character::Tick(float DeltaTime)
 // Called to bind functionality to input
 void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	//Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// '1' 키에 대한 이벤트 처리
-	PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AC_Character::EquipWeapon);
+	//PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AC_Character::EquipSword);
+	//PlayerInputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AC_Character::EquipRifle);
 
 	// Set up action bindings
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
@@ -153,6 +163,12 @@ void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		// Attack
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AC_Character::Attack);
+
+		// Press1 (Sword)
+		EnhancedInputComponent->BindAction(Press1Action, ETriggerEvent::Started, this, &AC_Character::EquipSword);
+
+		// Press2 (Rifle)
+		EnhancedInputComponent->BindAction(Press2Action, ETriggerEvent::Started, this, &AC_Character::EquipRifle);
 	}
 	else
 	{
@@ -200,21 +216,76 @@ void AC_Character::Look(const FInputActionValue& Value)
 	}
 }
 
-void AC_Character::EquipWeapon()
+void AC_Character::EquipSword()
 {
-	if (Sword)
-	{
-		bEquipWeapon = !bEquipWeapon;
-	}
-
+	// 무기를 장착 중일 때,
 	if (bEquipWeapon)
 	{
-		Sword->Equip();
+		if (PlayerWeapon == EPlayerWeapon::Sword)
+		{
+			// 장착 해제
+			Sword->UnEquip();
+		}
+		// 해당 무기가 총이면
+		else if (PlayerWeapon == EPlayerWeapon::Rifle)
+		{
+			// 장착 해제
+			Rifle->UnEquip();
+		}
+
+		// 무기를 장착 중이 아니게 설정
+		bEquipWeapon = false;
+		PlayerWeapon = EPlayerWeapon::Unarmed;
 	}
+	// 무기를 장착 중이 아닐 때,
 	else
 	{
-		Sword->UnEquip();
+		// 검을 장착
+		Sword->Equip();
+
+		// 무기를 장착 중이게 설정
+		bEquipWeapon = true;
+		PlayerWeapon = EPlayerWeapon::Sword;
 	}
+}
+
+void AC_Character::EquipRifle()
+{
+	// 무기를 장착 중일 때,
+	if (bEquipWeapon)
+	{
+		// 해당 무기가 총이면
+		if (PlayerWeapon == EPlayerWeapon::Rifle)
+		{
+			// 장착 해제
+			Rifle->UnEquip();
+		}
+		// 해당 무기가 검이면
+		else if (PlayerWeapon == EPlayerWeapon::Sword)
+		{
+			// 장착 해제
+			Sword->UnEquip();
+		}
+
+		// 무기를 장착 중이 아니게 설정
+		bEquipWeapon = false;
+		PlayerWeapon = EPlayerWeapon::Unarmed;
+	}
+	// 무기를 장착 중이 아닐 때,
+	else
+	{
+		// 총을 장착
+		Rifle->Equip();
+
+		// 무기를 장착 중이게 설정
+		bEquipWeapon = true;
+		PlayerWeapon = EPlayerWeapon::Rifle;
+	}
+}
+
+void AC_Character::SetUnarmed()
+{
+	PlayerWeapon = EPlayerWeapon::Unarmed;
 }
 
 void AC_Character::WalkSlow(const FInputActionValue& Value)
@@ -235,16 +306,6 @@ void AC_Character::WalkFast(const FInputActionValue& Value)
 
 void AC_Character::Attack(const FInputActionValue& Value)
 {
-	if (Sword && bEquipWeapon)
-	{
-		switch (AttackStage)
-		{
-			case 0: PlayAnimMontage(Sword->AttackMontage, 1.0f, FName("Attack1")); break;
-			case 1: PlayAnimMontage(Sword->AttackMontage, 1.0f, FName("Attack2")); break;
-			case 2: PlayAnimMontage(Sword->AttackMontage, 1.0f, FName("Attack3")); break;
-		}
-
-		if (AttackStage == AttackMaxStage) AttackStage = 0;
-		else AttackStage++;
-	}
+	if (PlayerWeapon == EPlayerWeapon::Unarmed) return;
+	else if (PlayerWeapon == EPlayerWeapon::Sword) Sword->Attack();
 }

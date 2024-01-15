@@ -11,10 +11,12 @@
 #include "CppMacro.h"
 
 // Sets default values
-AC_Sword::AC_Sword() : OwnerCharacter(nullptr)
+AC_Sword::AC_Sword() : 
+	OwnerCharacter(nullptr), 
+	AttackCurStage(0), AttackMaxStage(3), ComboTime(0.0f)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	CppMacro::CreateComponet(this, Root, TEXT("Root"));
 	CppMacro::CreateComponet(this, SkeletalMeshComponent, TEXT("Mesh"), Root);
@@ -46,6 +48,17 @@ void AC_Sword::BeginPlay()
 
 
 
+void AC_Sword::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (ComboTime > 0.0f)
+	{
+		ComboTime -= DeltaTime;
+		if (ComboTime <= 0.0f) AttackCurStage = 0;
+	}
+}
+
 AC_Sword* AC_Sword::Spawn(ACharacter* InOwner)
 {
 	FActorSpawnParameters SpawnParams;
@@ -64,11 +77,42 @@ AC_Sword* AC_Sword::Spawn(ACharacter* InOwner)
 
 void AC_Sword::Equip()
 {
-	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HandSocket);
+	UE_LOG(LogTemp, Log, TEXT("Sword Equip"));
+	OwnerCharacter->PlayAnimMontage(EquipMontage);
 }
 
 void AC_Sword::UnEquip()
 {
+	UE_LOG(LogTemp, Log, TEXT("Sword UnEquip"));
+	OwnerCharacter->PlayAnimMontage(UnequipMontage);
+}
+
+void AC_Sword::GrabSword()
+{
+	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HandSocket);
+}
+
+void AC_Sword::SheathSword()
+{
 	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SheathSocket);
+}
+
+
+void AC_Sword::Attack()
+{
+	if (!bCanAttack) return;
+	else bCanAttack = false;
+
+	switch (AttackCurStage)
+	{
+		case 0: OwnerCharacter->PlayAnimMontage(AttackMontage, 1.0f, FName("Attack1")); break;
+		case 1: OwnerCharacter->PlayAnimMontage(AttackMontage, 1.0f, FName("Attack2")); break;
+		case 2: OwnerCharacter->PlayAnimMontage(AttackMontage, 1.0f, FName("Attack3")); break;
+	}
+
+	AttackCurStage++;
+	ComboTime = 2.0f;
+
+	if (AttackCurStage == AttackMaxStage) AttackCurStage = 0;
 }
 

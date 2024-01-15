@@ -46,6 +46,15 @@ public:
 private:
 	class ACharacter* OwnerCharacter;
 
+	int32	AttackCurStage;
+	int32	AttackMaxStage;
+	float	ComboTime;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	bool	bCanAttack{ true };
+
+
 public:	
 	// Sets default values for this actor's properties
 	AC_Sword();
@@ -55,7 +64,17 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	virtual void Tick(float DeltaTime) override;
+
 	static AC_Sword* Spawn(class ACharacter* Character);
+
 	void Equip();
 	void UnEquip();
+
+	UFUNCTION(BlueprintCallable)
+	void GrabSword();
+	UFUNCTION(BlueprintCallable)
+	void SheathSword();
+
+	void Attack();
 };

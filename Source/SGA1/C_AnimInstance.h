@@ -13,5 +13,25 @@ UCLASS()
 class SGA1_API UC_AnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+
+private:
+	class AC_Character* Owner{nullptr};
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float	Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool	bIsAir;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool	bEquipWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FVector	Velocity;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int		PlayerWeaponState;
+
+
+public:
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	
 };
