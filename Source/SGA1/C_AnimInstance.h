@@ -28,6 +28,8 @@ protected:
 	FVector	Velocity;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int		PlayerWeaponState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FRotator Rotator;
 
 
 public:
