@@ -76,5 +76,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SheathSword();
 
-	void Attack();
+	void Attack();			// LMB 기본공격
+	void SpecialAction();	// RMB 특수행동 (미정)
 };

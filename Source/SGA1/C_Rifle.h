@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "C_Rifle.generated.h"
 
+class UC_WB_Crosshair;
+class AC_Bullet;
+
 UCLASS()
 class SGA1_API AC_Rifle : public AActor
 {
@@ -21,6 +24,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USkeletalMesh* SkeletalMesh;
 
+	UC_WB_Crosshair* Crosshair;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UC_WB_Crosshair> CrosshairClass;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Bullet")
+	TSubclassOf<AC_Bullet> BulletClass;
+
 public:
 	// attack montages
 	UPROPERTY(EditAnywhere, Category = "Anim")
@@ -28,11 +39,11 @@ public:
 
 	// equip montages
 	UPROPERTY(EditAnywhere, Category = "Anim")
-	UAnimMontage* EquipMontage2;
+	UAnimMontage* EquipMontage;
 
 	// unequip montages
 	UPROPERTY(EditAnywhere, Category = "Anim")
-	UAnimMontage* UnequipMontage2;
+	UAnimMontage* UnequipMontage;
 
 	UPROPERTY(EditAnywhere)
 	FName HandSocket{ TEXT("grabRifle") };
@@ -65,4 +76,7 @@ public:
 	void GrabRifle();
 	UFUNCTION(BlueprintCallable)
 	void BackRifle();
+
+	void Attack(FVector _Target);		// LMB 기본공격
+	void SpecialAction();				// RMB 특수행동 (라이플은 줌)
 };

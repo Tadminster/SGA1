@@ -116,3 +116,7 @@ void AC_Sword::Attack()
 	if (AttackCurStage == AttackMaxStage) AttackCurStage = 0;
 }
 
+void AC_Sword::SpecialAction()
+{
+}
+

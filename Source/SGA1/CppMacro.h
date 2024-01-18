@@ -3,6 +3,27 @@
 
 namespace CppMacro
 {
+	template <typename T>
+	static T* GetComponent(AActor* InActor)
+	{
+		return Cast<T>(InActor->GetComponentByClass(T::StaticClass()));
+	}
+
+	template<typename T>
+	static T* GetComponent(AActor* InActor, FString InComponentName)
+	{
+		TArray<T*> Components;
+		InActor->GetComponents<T>(Components);
+
+		for (T* Component : Components)
+		{
+			if (Component->GetName() == InComponentName)
+				return Component;
+		}
+
+		return NULL;
+	}
+
 	template<typename T>
 	static void CreateComponet(AActor* Actor, T*& Component, const FName& Name, USceneComponent* Parent = nullptr)
 	{

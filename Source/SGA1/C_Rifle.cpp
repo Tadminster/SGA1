@@ -4,9 +4,12 @@
 #include "C_Rifle.h"
 #include "Components/SceneComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "C_WB_Crosshair.h"
 
 #include "GameFramework/Character.h"
 #include "Animation/AnimMontage.h"
+
+#include "C_Bullet.h"
 
 #include "CppMacro.h"
 
@@ -17,24 +20,24 @@ AC_Rifle::AC_Rifle()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Root, Mesh
 	CppMacro::CreateComponet(this, Root, TEXT("Root"));
 	CppMacro::CreateComponet(this, SkeletalMeshComponent, TEXT("Mesh"), Root);
 	
-	FString SkeletalMeshPath = TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'");
-	CppMacro::GetObject<USkeletalMesh>(SkeletalMesh, SkeletalMeshPath);
+	// Skeletal Mesh
+	CppMacro::GetObject<USkeletalMesh>(SkeletalMesh, TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));
 	SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 
-	// attack montages
-	//FString AttackMontagePath = TEXT("AnimMontage'/Game/Characters/Mannequins/Animations/Manny/AM_SwordAndShield_Attack.AM_SwordAndShield_Attack'");
-	//CppMacro::GetObject<UAnimMontage>(AttackMontage, AttackMontagePath);
+	// Crosshair
+	CppMacro::GetClass<UC_WB_Crosshair>(&CrosshairClass, TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Scene2/BP_WB_Crosshair.BP_WB_Crosshair_C'"));
 
-	// equip montages
-	FString EquipMontagePath = TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/AM_EquipRifle.AM_EquipRifle'");
-	CppMacro::GetObject<UAnimMontage>(EquipMontage2, EquipMontagePath);
+	// Montages
+	CppMacro::GetObject<UAnimMontage>(EquipMontage, TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Rifle/AM_Rifle_Equip.AM_Rifle_Equip'"));
+	CppMacro::GetObject<UAnimMontage>(UnequipMontage, TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Rifle/AM_Rifle_Unequip.AM_Rifle_Unequip'"));
+	CppMacro::GetObject<UAnimMontage>(AttackMontage, TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Rifle/AM_Rifle_Fire_Hip.AM_Rifle_Fire_Hip'"));
 
-	// unequip montages
-	FString UnequipMontagePath = TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/AM_UnequipRifle.AM_UnequipRifle'");
-	CppMacro::GetObject<UAnimMontage>(UnequipMontage2, UnequipMontagePath);
+	// Bullet
+	CppMacro::GetClass(&BulletClass, TEXT("/Script/Engine.Blueprint'/Game/Scene2/BP_Bullet.BP_Bullet_C'"));
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +47,11 @@ void AC_Rifle::BeginPlay()
 
 	// Get Owner
 	OwnerCharacter = Cast<ACharacter>(GetOwner());
+
+	// Spawn Crosshair
+	Crosshair = CreateWidget<UC_WB_Crosshair>(GetWorld(), CrosshairClass);
+	//Crosshair = CreateWidget<UC_WB_Crosshair>(OwnerCharacter->GetController<APlayerController>(), CrosshairClass);
+	Crosshair->AddToViewport();
 }
 
 // Called every frame
@@ -72,13 +80,13 @@ AC_Rifle* AC_Rifle::Spawn(ACharacter* InOwner)
 void AC_Rifle::Equip()
 {
 	UE_LOG(LogTemp, Log, TEXT("Rifle Equip"));
-	OwnerCharacter->PlayAnimMontage(EquipMontage2);
+	OwnerCharacter->PlayAnimMontage(EquipMontage);
 }
 
 void AC_Rifle::UnEquip()
 {
 	UE_LOG(LogTemp, Log, TEXT("Rifle UnEquip"));
-	OwnerCharacter->PlayAnimMontage(UnequipMontage2);
+	OwnerCharacter->PlayAnimMontage(UnequipMontage);
 }
 
 void AC_Rifle::GrabRifle()
@@ -89,5 +97,26 @@ void AC_Rifle::GrabRifle()
 void AC_Rifle::BackRifle()
 {
 	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, BackSocket);
+}
+
+void AC_Rifle::Attack(FVector _Trajectory)
+{
+	OwnerCharacter->PlayAnimMontage(AttackMontage);
+
+	// ÃÑ±¸À§Ä¡ ÀúÀå
+	FVector MuzzleSocketLocation = SkeletalMeshComponent->GetSocketLocation("Muzzle");
+
+	// ÃÑ¾Ë ±ËÀû °è»ê
+	FVector Direction = _Trajectory - MuzzleSocketLocation;
+	Direction.Normalize();
+
+	// ÃÑ¾Ë »ý¼º
+	AC_Bullet* Bullet = GetWorld()->SpawnActor<AC_Bullet>(BulletClass);
+	Bullet->Fire(MuzzleSocketLocation, Direction);
+}
+
+void AC_Rifle::SpecialAction()
+{
+
 }
 

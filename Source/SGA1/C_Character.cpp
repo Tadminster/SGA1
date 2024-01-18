@@ -127,7 +127,22 @@ void AC_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	// Targeting
+	FHitResult HitResult;										// 충돌 정보를 담을 변수
+	FVector Start = Camera->GetComponentLocation();				// 카메라 위치
+	FVector End = Start + Camera->GetForwardVector() * 10000.f;	// 카메라 위치에서 카메라가 바라보는 방향으로 10000만큼 떨어진 위치
+	Trajectory = End;
+	FCollisionQueryParams CollisionParams;						// 충돌에 대한 정보를 담을 변수
+	CollisionParams.AddIgnoredActor(this);						// 충돌 검사에서 제외할 Actor
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);	// 충돌 검사
+	if (bHit)
+	{
+		Target = HitResult.GetActor(); // 충돌한 Actor를 Target으로 설정
+	}
+	else
+	{
+		Target = nullptr;
+	}
 }
 
 // Called to bind functionality to input
@@ -189,11 +204,10 @@ void AC_Character::Move(const FInputActionValue& Value)
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get camera forward vector
-		//const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector ForwardDirection = Camera->GetForwardVector();
+		//const FVector ForwardDirection = Camera->GetForwardVector();
+		const FVector ForwardDirection = GetActorForwardVector();
 
 		// get right vector 
-		//const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		const FVector RightDirection = Camera->GetRightVector();
 
 		// add movement 
@@ -308,4 +322,5 @@ void AC_Character::Attack(const FInputActionValue& Value)
 {
 	if (PlayerWeapon == EPlayerWeapon::Unarmed) return;
 	else if (PlayerWeapon == EPlayerWeapon::Sword) Sword->Attack();
+	else if (PlayerWeapon == EPlayerWeapon::Rifle) Rifle->Attack(Trajectory);
 }

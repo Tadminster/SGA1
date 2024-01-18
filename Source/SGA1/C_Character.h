@@ -88,9 +88,11 @@ protected:
 	EPlayerWeapon PlayerWeapon{ EPlayerWeapon::Unarmed };
 
 private:
-	// Sword
-	AC_Sword* Sword;
-	AC_Rifle* Rifle;
+	AC_Sword*	Sword;
+	AC_Rifle*	Rifle;
+	FVector		Trajectory;		// 탄도(궤적)
+	AActor*		Target;			// 라이플 공격 타겟
+
 
 public:
 	int32 AttackStack{ 0 }; // 공격스택
