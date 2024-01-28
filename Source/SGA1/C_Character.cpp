@@ -34,7 +34,7 @@ AC_Character::AC_Character():
 	CppMacro::CreateComponet<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
 	SpringArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controlle
-	SpringArm->SetRelativeLocation(FVector(20, 0, 45));
+	SpringArm->SetRelativeLocation(FVector(50, 50, 50));
 	SpringArm->SetRelativeRotation(FRotator(-20, 0, 0));
 	
 	CppMacro::CreateComponet<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
@@ -287,6 +287,7 @@ void AC_Character::EquipRifle()
 		{
 			// 장착 해제
 			Rifle->UnEquip();
+			SpringArm->SetRelativeLocation(FVector(50, 50, 50));
 		}
 		// 해당 무기가 검이면
 		else if (PlayerWeapon == EPlayerWeapon::Sword)
@@ -304,6 +305,8 @@ void AC_Character::EquipRifle()
 	{
 		// 총을 장착
 		Rifle->Equip();
+
+		SpringArm->SetRelativeLocation(FVector(200, 50, 50));
 
 		// 무기를 장착 중이게 설정
 		bEquipWeapon = true;
