@@ -133,7 +133,8 @@ void AC_Character::Tick(float DeltaTime)
 	FVector End = Start + Camera->GetForwardVector() * 10000.f;	// 카메라 위치에서 카메라가 바라보는 방향으로 10000만큼 떨어진 위치
 	Trajectory = End;
 	FCollisionQueryParams CollisionParams;						// 충돌에 대한 정보를 담을 변수
-	CollisionParams.AddIgnoredActor(this);						// 충돌 검사에서 제외할 Actor
+	CollisionParams.AddIgnoredActor(this);						// 자기 자신은 검사에서 제외
+	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);	// 충돌 검사
 	if (bHit)
 	{
@@ -143,6 +144,19 @@ void AC_Character::Tick(float DeltaTime)
 	{
 		Target = nullptr;
 	}
+
+
+	if (PlayerWeapon == EPlayerWeapon::Rifle)
+	{
+		// 바닥과 충돌은 제외
+		if (bHit && Target->GetName() == "Floor")
+		{
+			Rifle->UpdateCrosshair(false);
+		}
+		else Rifle->UpdateCrosshair(bHit);
+	}
+
+
 }
 
 // Called to bind functionality to input

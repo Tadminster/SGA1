@@ -8,6 +8,7 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
+//class FCollisionQueryParams;
 
 UCLASS()
 class SGA1_API AC_Bullet : public AActor
@@ -22,10 +23,6 @@ private:
 	// Movement
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UProjectileMovementComponent* Movement;
-
-	// Collision
-	//UPROPERTY(VisibleAnywhere, Category = "Collision")
-	//USphereComponent* Collision;
 
 private:
 	FVector Direction;
@@ -46,5 +43,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void Fire(FVector _Location, FVector _Direction);
+	void Fire(FVector _Location, FVector _Direction, AActor* _IgnoredActor = nullptr);
 };

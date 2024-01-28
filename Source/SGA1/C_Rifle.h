@@ -77,6 +77,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BackRifle();
 
+	// UI
+	void UpdateCrosshair(bool bEnemyInSight);
+
+	// 공격
 	void Attack(FVector _Target);		// LMB 기본공격
 	void SpecialAction();				// RMB 특수행동 (라이플은 줌)
 };

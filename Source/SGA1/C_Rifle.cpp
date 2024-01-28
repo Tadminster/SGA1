@@ -29,7 +29,7 @@ AC_Rifle::AC_Rifle()
 	SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 
 	// Crosshair
-	CppMacro::GetClass<UC_WB_Crosshair>(&CrosshairClass, TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Scene2/BP_WB_Crosshair.BP_WB_Crosshair_C'"));
+	CppMacro::GetClass<UC_WB_Crosshair>(&CrosshairClass, TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Scene2/UI/BP_WB_Crosshair.BP_WB_Crosshair_C'"));
 
 	// Montages
 	CppMacro::GetObject<UAnimMontage>(EquipMontage, TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Rifle/AM_Rifle_Equip.AM_Rifle_Equip'"));
@@ -81,12 +81,14 @@ void AC_Rifle::Equip()
 {
 	UE_LOG(LogTemp, Log, TEXT("Rifle Equip"));
 	OwnerCharacter->PlayAnimMontage(EquipMontage);
+	Crosshair->CrosshairVisible();
 }
 
 void AC_Rifle::UnEquip()
 {
 	UE_LOG(LogTemp, Log, TEXT("Rifle UnEquip"));
 	OwnerCharacter->PlayAnimMontage(UnequipMontage);
+	Crosshair->CrosshairInvisible();
 }
 
 void AC_Rifle::GrabRifle()
@@ -97,6 +99,12 @@ void AC_Rifle::GrabRifle()
 void AC_Rifle::BackRifle()
 {
 	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, BackSocket);
+}
+
+void AC_Rifle::UpdateCrosshair(bool bEnemyInSight)
+{
+	if (bEnemyInSight) Crosshair->EnemyInCrosshair();
+	else Crosshair->EnemyOutCrosshair();
 }
 
 void AC_Rifle::Attack(FVector _Trajectory)
@@ -112,7 +120,7 @@ void AC_Rifle::Attack(FVector _Trajectory)
 
 	// ÃÑ¾Ë »ý¼º
 	AC_Bullet* Bullet = GetWorld()->SpawnActor<AC_Bullet>(BulletClass);
-	Bullet->Fire(MuzzleSocketLocation, Direction);
+	Bullet->Fire(MuzzleSocketLocation, Direction, OwnerCharacter);
 }
 
 void AC_Rifle::SpecialAction()

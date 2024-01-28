@@ -27,12 +27,6 @@ AC_Bullet::AC_Bullet()
 	Movement->Bounciness = 0.f;
 	Movement->Friction = 0.f;
 
-	//Collision = CreateDefaultSubobject<USphereComponent>(TEXT("BulletCollision"));
-	//Collision->InitSphereRadius(5.f);
-	//Collision->BodyInstance.SetCollisionProfileName("Bullet");
-	//Collision->OnComponentHit.AddDynamic(this, &AC_Bullet::OnHit);
-	//Collision->SetupAttachment(RootComponent);
-
 	InitialLifeSpan = 3.f;
 }
 
@@ -46,11 +40,19 @@ void AC_Bullet::BeginPlay()
 void AC_Bullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
 }
 
-void AC_Bullet::Fire(FVector _Location, FVector _Direction)
+void AC_Bullet::Fire(FVector _Location, FVector _Direction, AActor* _IgnoredActor)
 {
 	SetActorLocation(_Location);
 	Movement->Velocity = _Direction * Movement->InitialSpeed;
+
+	if (_IgnoredActor)
+	{
+		// 총알의 Mesh가 IgnoredActor와의 충돌을 무시하도록 설정
+		Mesh->MoveIgnoreActors.Add(_IgnoredActor); 
+	}
 }
 

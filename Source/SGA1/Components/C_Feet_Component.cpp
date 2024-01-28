@@ -85,11 +85,11 @@ void UC_Feet_Component::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	TraceFeet("LeftFootSocket", LeftFootDistance);
 	TraceFeet("RightFootSocket", RightFootDistance);
 
-	FeetData.LeftFootLocation = OwnerCharacter->GetMesh()->GetSocketLocation(LeftFootSocketName);
-	FeetData.RightFootLocation = OwnerCharacter->GetMesh()->GetSocketLocation(RightFootSocketName);
+	//FeetData.LeftFootLocation = OwnerCharacter->GetMesh()->GetSocketLocation(LeftFootSocketName);
+	//FeetData.RightFootLocation = OwnerCharacter->GetMesh()->GetSocketLocation(RightFootSocketName);
 
-	FeetData.LeftFootLocation.Z += LeftFootDistance;
-	FeetData.RightFootLocation.Z += RightFootDistance;
+	//FeetData.LeftFootLocation.Z += LeftFootDistance;
+	//FeetData.RightFootLocation.Z += RightFootDistance;
 
 	//UE_LOG(LogTemp, Warning, TEXT("Left Foot Distance: %f"), LeftFootDistance);
 	//UE_LOG(LogTemp, Warning, TEXT("Right Foot Distance: %f"), RightFootDistance);
