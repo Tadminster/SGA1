@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+
+#include "Components/C_Feet_Component.h"
+
 #include "C_AnimInstance.generated.h"
 
 /**
@@ -30,6 +33,8 @@ protected:
 	int		PlayerWeaponState;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FRotator Rotator;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+
 
 
 public:

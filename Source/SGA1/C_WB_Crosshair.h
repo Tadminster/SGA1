@@ -16,14 +16,14 @@ class SGA1_API UC_WB_Crosshair : public UUserWidget
 	
 	public:
 		UFUNCTION(BlueprintImplementableEvent)
-		void ZoomOn();
+		void CrosshairVisible();
 
 		UFUNCTION(BlueprintImplementableEvent)
-		void ZoomOff();
+		void CrosshairInvisible();
 
 		UFUNCTION(BlueprintImplementableEvent)
-		void FocusOn(float Spread);
+		void EnemyInCrosshair();
 
 		UFUNCTION(BlueprintImplementableEvent)
-		void FocusOff();
+		void EnemyOutCrosshair();
 };

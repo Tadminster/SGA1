@@ -34,7 +34,7 @@ AC_Character::AC_Character():
 	CppMacro::CreateComponet<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
 	SpringArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controlle
-	SpringArm->SetRelativeLocation(FVector(20, 0, 45));
+	SpringArm->SetRelativeLocation(FVector(50, 50, 50));
 	SpringArm->SetRelativeRotation(FRotator(-20, 0, 0));
 	
 	CppMacro::CreateComponet<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
@@ -133,7 +133,8 @@ void AC_Character::Tick(float DeltaTime)
 	FVector End = Start + Camera->GetForwardVector() * 10000.f;	// 카메라 위치에서 카메라가 바라보는 방향으로 10000만큼 떨어진 위치
 	Trajectory = End;
 	FCollisionQueryParams CollisionParams;						// 충돌에 대한 정보를 담을 변수
-	CollisionParams.AddIgnoredActor(this);						// 충돌 검사에서 제외할 Actor
+	CollisionParams.AddIgnoredActor(this);						// 자기 자신은 검사에서 제외
+	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);	// 충돌 검사
 	if (bHit)
 	{
@@ -143,6 +144,19 @@ void AC_Character::Tick(float DeltaTime)
 	{
 		Target = nullptr;
 	}
+
+
+	if (PlayerWeapon == EPlayerWeapon::Rifle)
+	{
+		// 바닥과 충돌은 제외
+		if (bHit && Target->GetName() == "Floor")
+		{
+			Rifle->UpdateCrosshair(false);
+		}
+		else Rifle->UpdateCrosshair(bHit);
+	}
+
+
 }
 
 // Called to bind functionality to input
@@ -273,6 +287,7 @@ void AC_Character::EquipRifle()
 		{
 			// 장착 해제
 			Rifle->UnEquip();
+			SpringArm->SetRelativeLocation(FVector(50, 50, 50));
 		}
 		// 해당 무기가 검이면
 		else if (PlayerWeapon == EPlayerWeapon::Sword)
@@ -290,6 +305,8 @@ void AC_Character::EquipRifle()
 	{
 		// 총을 장착
 		Rifle->Equip();
+
+		SpringArm->SetRelativeLocation(FVector(200, 50, 50));
 
 		// 무기를 장착 중이게 설정
 		bEquipWeapon = true;
