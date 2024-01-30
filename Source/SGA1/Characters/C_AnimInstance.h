@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-
-#include "Components/C_Feet_Component.h"
-
 #include "C_AnimInstance.generated.h"
 
 /**

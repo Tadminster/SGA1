@@ -16,8 +16,8 @@
 #include "InputActionValue.h"
 #include "InputMappingContext.h"
 
-#include "C_Sword.h"
-#include "C_Rifle.h"
+#include "Weapons/C_Sword.h"
+#include "Weapons/C_Rifle.h"
 
 #include "CppMacro.h"
 
@@ -48,7 +48,7 @@ AC_Character::AC_Character():
 
 	// Animation
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	FString AnimBlueprintPath = TEXT("AnimBlueprint'/Game/Scene2/ABP_Character.ABP_Character'");
+	FString AnimBlueprintPath = TEXT("AnimBlueprint'/Game/Scene2/Animations/ABP_Character.ABP_Character'");
 	CppMacro::GetObject<UAnimBlueprint>(AnimBlueprintAsset, AnimBlueprintPath);
 	GetMesh()->SetAnimInstanceClass(AnimBlueprintAsset->GeneratedClass);
 
