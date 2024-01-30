@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "C_AnimInstance.h"
+#include "Characters/C_AnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "C_Character.h"
 

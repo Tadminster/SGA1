@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "C_Character.h"
+#include "Characters/C_Character.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
