@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "C_AnimInstance.h"
+#include "Characters/C_AnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "C_Character.h"
+#include "C_Player.h"
 
 #include "CppMacro.h"
 
 void UC_AnimInstance::NativeBeginPlay()
 {
-	Owner = Cast<AC_Character>(TryGetPawnOwner());
+	Owner = Cast<AC_Player>(TryGetPawnOwner());
 }
 
 void UC_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)

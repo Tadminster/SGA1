@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "C_Sword.h"
+#include "Weapons/C_Sword.h"
 #include "Components/SceneComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -29,11 +29,11 @@ AC_Sword::AC_Sword() :
 	FString AttackMontagePath = TEXT("AnimMontage'/Game/Characters/Mannequins/Animations/Manny/AM_SwordAndShield_Attack.AM_SwordAndShield_Attack'");
 	CppMacro::GetObject<UAnimMontage>(AttackMontage, AttackMontagePath);
 
-	FString EquipMontagePath = TEXT("AnimMontage'/Game/Scene2/Animations/AM_DrawSword.AM_DrawSword'");
+	FString EquipMontagePath = TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Sword/AM_DrawSword.AM_DrawSword'");
 	CppMacro::GetObject<UAnimMontage>(EquipMontage, EquipMontagePath);
 
 	// unequip montages
-	FString UnequipMontagePath = TEXT("AnimMontage'/Game/Scene2/Animations/AM_SheathSword.AM_SheathSword'");
+	FString UnequipMontagePath = TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Sword/AM_SheathSword.AM_SheathSword'");
 	CppMacro::GetObject<UAnimMontage>(UnequipMontage, UnequipMontagePath);
 }
 

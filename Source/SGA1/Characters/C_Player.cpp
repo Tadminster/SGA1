@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "C_Character.h"
+#include "Characters/C_Player.h"
 
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -16,17 +16,17 @@
 #include "InputActionValue.h"
 #include "InputMappingContext.h"
 
-#include "C_Sword.h"
-#include "C_Rifle.h"
+#include "Weapons/C_Sword.h"
+#include "Weapons/C_Rifle.h"
 
 #include "CppMacro.h"
+#include "C_Player.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Sets default values
-AC_Character::AC_Character():
-	bEquipWeapon(false), 
-	Sword(nullptr)
+AC_Player::AC_Player():
+	bEquipWeapon(false)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -48,7 +48,7 @@ AC_Character::AC_Character():
 
 	// Animation
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	FString AnimBlueprintPath = TEXT("AnimBlueprint'/Game/Scene2/ABP_Character.ABP_Character'");
+	FString AnimBlueprintPath = TEXT("AnimBlueprint'/Game/Scene2/Animations/ABP_Character.ABP_Character'");
 	CppMacro::GetObject<UAnimBlueprint>(AnimBlueprintAsset, AnimBlueprintPath);
 	GetMesh()->SetAnimInstanceClass(AnimBlueprintAsset->GeneratedClass);
 
@@ -103,7 +103,7 @@ AC_Character::AC_Character():
 }
 
 // Called when the game starts or when spawned
-void AC_Character::BeginPlay()
+void AC_Player::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -123,7 +123,7 @@ void AC_Character::BeginPlay()
 }
 
 // Called every frame
-void AC_Character::Tick(float DeltaTime)
+void AC_Player::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -160,44 +160,44 @@ void AC_Character::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	//Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// '1' 키에 대한 이벤트 처리
-	//PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AC_Character::EquipSword);
-	//PlayerInputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AC_Character::EquipRifle);
+	//PlayerInputComponent->BindKey(EKeys::One, IE_Pressed, this, &AC_Player::EquipSword);
+	//PlayerInputComponent->BindKey(EKeys::Two, IE_Pressed, this, &AC_Player::EquipRifle);
 
 	// Set up action bindings
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent)
 	 {
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AC_Character::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AC_Player::Move);
 
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AC_Character::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AC_Player::Look);
 
 		// Walk Slow
-		EnhancedInputComponent->BindAction(WalkSlowAction, ETriggerEvent::Started, this, &AC_Character::WalkSlow);
-		EnhancedInputComponent->BindAction(WalkSlowAction, ETriggerEvent::Completed, this, &AC_Character::WalkNormal);
+		EnhancedInputComponent->BindAction(WalkSlowAction, ETriggerEvent::Started, this, &AC_Player::WalkSlow);
+		EnhancedInputComponent->BindAction(WalkSlowAction, ETriggerEvent::Completed, this, &AC_Player::WalkNormal);
 
 		// Walk Fast
-		EnhancedInputComponent->BindAction(WalkFastAction, ETriggerEvent::Started, this, &AC_Character::WalkFast);
-		EnhancedInputComponent->BindAction(WalkFastAction, ETriggerEvent::Completed, this, &AC_Character::WalkNormal);
+		EnhancedInputComponent->BindAction(WalkFastAction, ETriggerEvent::Started, this, &AC_Player::WalkFast);
+		EnhancedInputComponent->BindAction(WalkFastAction, ETriggerEvent::Completed, this, &AC_Player::WalkNormal);
 
 		// Attack
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AC_Character::Attack);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AC_Player::Attack);
 
 		// Press1 (Sword)
-		EnhancedInputComponent->BindAction(Press1Action, ETriggerEvent::Started, this, &AC_Character::EquipSword);
+		EnhancedInputComponent->BindAction(Press1Action, ETriggerEvent::Started, this, &AC_Player::EquipSword);
 
 		// Press2 (Rifle)
-		EnhancedInputComponent->BindAction(Press2Action, ETriggerEvent::Started, this, &AC_Character::EquipRifle);
+		EnhancedInputComponent->BindAction(Press2Action, ETriggerEvent::Started, this, &AC_Player::EquipRifle);
 	}
 	else
 	{
@@ -205,7 +205,7 @@ void AC_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	}
 }
 
-void AC_Character::Move(const FInputActionValue& Value)
+void AC_Player::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -230,7 +230,7 @@ void AC_Character::Move(const FInputActionValue& Value)
 	}
 }
 
-void AC_Character::Look(const FInputActionValue& Value)
+void AC_Player::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -244,7 +244,7 @@ void AC_Character::Look(const FInputActionValue& Value)
 	}
 }
 
-void AC_Character::EquipSword()
+void AC_Player::EquipSword()
 {
 	// 무기를 장착 중일 때,
 	if (bEquipWeapon)
@@ -277,7 +277,7 @@ void AC_Character::EquipSword()
 	}
 }
 
-void AC_Character::EquipRifle()
+void AC_Player::EquipRifle()
 {
 	// 무기를 장착 중일 때,
 	if (bEquipWeapon)
@@ -314,30 +314,35 @@ void AC_Character::EquipRifle()
 	}
 }
 
-void AC_Character::SetUnarmed()
+void AC_Player::SetUnarmed()
 {
 	PlayerWeapon = EPlayerWeapon::Unarmed;
 }
 
-void AC_Character::WalkSlow(const FInputActionValue& Value)
+void AC_Player::WalkSlow()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 150.f;
 }
 
-void AC_Character::WalkNormal(const FInputActionValue& Value)
+void AC_Player::WalkNormal()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
 
-void AC_Character::WalkFast(const FInputActionValue& Value)
+void AC_Player::WalkFast()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 900.f;
 }
 
 
-void AC_Character::Attack(const FInputActionValue& Value)
+void AC_Player::Attack()
 {
 	if (PlayerWeapon == EPlayerWeapon::Unarmed) return;
 	else if (PlayerWeapon == EPlayerWeapon::Sword) Sword->Attack();
 	else if (PlayerWeapon == EPlayerWeapon::Rifle) Rifle->Attack(Trajectory);
+}
+
+void AC_Player::ChangeMeshColor_Implementation(const FLinearColor& Color)
+{
+	GetMesh()->SetVectorParameterValueOnMaterials(TEXT("BodyColor"), FVector(Color));
 }

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "C_Rifle.h"
+#include "Weapons/C_Rifle.h"
 #include "Components/SceneComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "C_WB_Crosshair.h"
@@ -29,7 +29,7 @@ AC_Rifle::AC_Rifle()
 	SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 
 	// Crosshair
-	CppMacro::GetClass<UC_WB_Crosshair>(&CrosshairClass, TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Scene2/UI/BP_WB_Crosshair.BP_WB_Crosshair_C'"));
+	CppMacro::GetClass<UC_WB_Crosshair>(&CrosshairClass, TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Scene2/Weapons/UI/BP_WB_Crosshair.BP_WB_Crosshair_C'"));
 
 	// Montages
 	CppMacro::GetObject<UAnimMontage>(EquipMontage, TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Rifle/AM_Rifle_Equip.AM_Rifle_Equip'"));
@@ -37,7 +37,7 @@ AC_Rifle::AC_Rifle()
 	CppMacro::GetObject<UAnimMontage>(AttackMontage, TEXT("/Script/Engine.AnimMontage'/Game/Scene2/Animations/Rifle/AM_Rifle_Fire_Hip.AM_Rifle_Fire_Hip'"));
 
 	// Bullet
-	CppMacro::GetClass(&BulletClass, TEXT("/Script/Engine.Blueprint'/Game/Scene2/BP_Bullet.BP_Bullet_C'"));
+	CppMacro::GetClass(&BulletClass, TEXT("/Script/Engine.Blueprint'/Game/Scene2/Weapons/BP_Bullet.BP_Bullet_C'"));
 }
 
 // Called when the game starts or when spawned

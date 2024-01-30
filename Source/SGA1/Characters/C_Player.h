@@ -2,8 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
+#include "Characters/C_Prototype.h"
+#include "Characters/I_Character.h"
+
 #include "Logging/LogMacros.h"
-#include "C_Character.generated.h"
+#include "C_Player.generated.h"
 
 UENUM(BlueprintType)
 enum class EPlayerWeapon : uint8
@@ -24,14 +28,14 @@ class AC_Rifle;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS()
-class SGA1_API AC_Character : public ACharacter
+class SGA1_API AC_Player : public AC_Prototype, public II_Character
 {
 	GENERATED_BODY()
 
 protected:
 	// SkeletalMesh
-	UPROPERTY(EditDefaultsOnly)
-	USkeletalMesh* SkeletalMesh;
+	//UPROPERTY(EditDefaultsOnly)
+	//USkeletalMesh* SkeletalMesh;
 
 	// SpringArm
 	UPROPERTY(EditDefaultsOnly)
@@ -88,7 +92,7 @@ protected:
 	EPlayerWeapon PlayerWeapon{ EPlayerWeapon::Unarmed };
 
 private:
-	AC_Sword*	Sword;
+	//AC_Sword*	Sword;
 	AC_Rifle*	Rifle;
 	FVector		Trajectory;		// Åºµµ(±ËÀû)
 	AActor*		Target;			// ¶óÀÌÇÃ °ø°Ý Å¸°Ù
@@ -99,7 +103,7 @@ public:
 
 public:
 	// Sets default values for this character's properties
-	AC_Character();
+	AC_Player();
 
 protected:
 	// Called when the game starts or when spawned
@@ -114,10 +118,15 @@ public:
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void WalkSlow(const FInputActionValue& Value);
-	void WalkNormal(const FInputActionValue& Value);
-	void WalkFast(const FInputActionValue& Value);
-	void Attack(const FInputActionValue& Value);
+	void WalkSlow();
+	void WalkNormal();
+	void WalkFast();
+	//virtual void Attack(const FInputActionValue& Value) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ChangeMeshColor_Implementation(const FLinearColor& Color) override;
+	//virtual AC_Sword* GetSword_Implementation() override;
+	virtual void Attack() override;
 
 	// Equip & Unequip Sword
 	void EquipSword();
@@ -127,8 +136,6 @@ public:
 	FORCEINLINE bool GetbEquipWeapon() const { return bEquipWeapon; };
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EPlayerWeapon GetPlayerWeaponState() const { return PlayerWeapon; };
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE AC_Sword* GetSword() { return Sword; };
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE AC_Rifle* GetRifle() { return Rifle; };
 

@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-
-#include "Components/C_Feet_Component.h"
-
 #include "C_AnimInstance.generated.h"
 
 /**
@@ -18,7 +15,7 @@ class SGA1_API UC_AnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 private:
-	class AC_Character* Owner{nullptr};
+	class AC_Player* Owner{nullptr};
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
