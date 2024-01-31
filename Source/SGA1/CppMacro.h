@@ -34,6 +34,12 @@ namespace CppMacro
 	}
 
 	template<typename T>
+	static void CreateActorComponet(AActor* Actor, T*& Component, const FName& Name)
+	{
+		Component = Actor->CreateDefaultSubobject<T>(Name);
+	}
+
+	template<typename T>
 	static void GetClass(TSubclassOf<T>* OutClass, const FString& Path)
 	{
 		ConstructorHelpers::FClassFinder<T> ClassFinder(*Path);

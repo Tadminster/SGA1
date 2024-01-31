@@ -31,20 +31,23 @@ AC_Player::AC_Player():
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CppMacro::CreateComponet<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
-	SpringArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controlle
-	SpringArm->SetRelativeLocation(FVector(50, 50, 50));
-	SpringArm->SetRelativeRotation(FRotator(-20, 0, 0));
-	
-	CppMacro::CreateComponet<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
-
 	// Skeletal Mesh
 	FString MeshPath = TEXT("SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'");
 	CppMacro::GetObject<USkeletalMesh>(SkeletalMesh, MeshPath);
 	GetMesh()->SetSkeletalMesh(SkeletalMesh);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0)); // Pitch, Yaw, Roll
+
+	// SpringArm
+	CppMacro::CreateComponet<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
+	SpringArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
+	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controlle
+	SpringArm->SetRelativeLocation(FVector(50, 50, 50));
+	SpringArm->SetRelativeRotation(FRotator(-20, 0, 0));
+	
+	// Camera
+	CppMacro::CreateComponet<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
+
 
 	// Animation
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -340,6 +343,11 @@ void AC_Player::Attack()
 	if (PlayerWeapon == EPlayerWeapon::Unarmed) return;
 	else if (PlayerWeapon == EPlayerWeapon::Sword) Sword->Attack();
 	else if (PlayerWeapon == EPlayerWeapon::Rifle) Rifle->Attack(Trajectory);
+}
+
+FGenericTeamId AC_Player::GetGenericTeamId() const
+{
+	return FGenericTeamId(TeamID);
 }
 
 void AC_Player::ChangeMeshColor_Implementation(const FLinearColor& Color)

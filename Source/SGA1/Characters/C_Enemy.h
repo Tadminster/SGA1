@@ -3,14 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Characters/C_Prototype.h"
 #include "GameFramework/Character.h"
 #include "Characters/I_Character.h"
 #include "C_Enemy.generated.h"
 
+class UBehaviorTree;
+
 UCLASS()
-class SGA1_API AC_Enemy : public ACharacter, public II_Character
+class SGA1_API AC_Enemy : public AC_Prototype, public II_Character
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	UBehaviorTree* BehaviorTree;
 
 public:
 	// Sets default values for this character's properties
@@ -27,4 +35,5 @@ public:
 	virtual void ChangeMeshColor_Implementation(const FLinearColor& Color) override;
 	virtual void Attack() override;
 
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
 };

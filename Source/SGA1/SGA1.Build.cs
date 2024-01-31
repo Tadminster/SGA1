@@ -13,7 +13,9 @@ public class SGA1 : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
-            "EnhancedInput"
+            "EnhancedInput",
+			"AIModule",
+			"GameplayTasks"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -6,6 +6,8 @@
 #include "Characters/C_Prototype.h"
 #include "Characters/I_Character.h"
 
+#include "GenericTeamAgentInterface.h"
+
 #include "Logging/LogMacros.h"
 #include "C_Player.generated.h"
 
@@ -28,7 +30,7 @@ class AC_Rifle;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS()
-class SGA1_API AC_Player : public AC_Prototype, public II_Character
+class SGA1_API AC_Player : public AC_Prototype, public II_Character, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -91,6 +93,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	EPlayerWeapon PlayerWeapon{ EPlayerWeapon::Unarmed };
 
+	UPROPERTY(EditDefaultsOnly)
+	uint8 TeamID{ 0 };
+
 private:
 	//AC_Sword*	Sword;
 	AC_Rifle*	Rifle;
@@ -122,6 +127,8 @@ public:
 	void WalkNormal();
 	void WalkFast();
 	//virtual void Attack(const FInputActionValue& Value) override;
+
+	virtual FGenericTeamId GetGenericTeamId() const override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void ChangeMeshColor_Implementation(const FLinearColor& Color) override;
