@@ -42,7 +42,7 @@ AC_Player::AC_Player():
 	CppMacro::CreateComponet<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
 	SpringArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controlle
-	SpringArm->SetRelativeLocation(FVector(50, 50, 50));
+	SpringArm->SetRelativeLocation(FVector(0, 50, 50));
 	SpringArm->SetRelativeRotation(FRotator(-20, 0, 0));
 	
 	// Camera
@@ -73,32 +73,17 @@ AC_Player::AC_Player():
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	FString ImcPath = TEXT("InputMappingContext'/Game/Input/Default_IMC.Default_IMC'");
-	CppMacro::GetObject<UInputMappingContext>(InputMappingContext, ImcPath);
-
-	FString MoveActionPath = TEXT("InputAction'/Game/Input/IA_Move.IA_Move'");
-	CppMacro::GetObject<UInputAction>(MoveAction, MoveActionPath);
-
-	FString JumpActionPath = TEXT("InputAction'/Game/Input/IA_Jump.IA_Jump'");
-	CppMacro::GetObject<UInputAction>(JumpAction, JumpActionPath);
-
-	FString LookActionPath = TEXT("InputAction'/Game/Input/IA_Look.IA_Look'");
-	CppMacro::GetObject<UInputAction>(LookAction, LookActionPath);
-
-	FString AttackActionPath = TEXT("InputAction'/Game/Input/IA_Attack.IA_Attack'");
-	CppMacro::GetObject<UInputAction>(AttackAction, AttackActionPath);
-
-	FString WalkSlowActionPath = TEXT("InputAction'/Game/Input/IA_WalkSlow.IA_WalkSlow'");
-	CppMacro::GetObject<UInputAction>(WalkSlowAction, WalkSlowActionPath);
-
-	FString WalkFastActionPath = TEXT("InputAction'/Game/Input/IA_WalkFast.IA_WalkFast'");
-	CppMacro::GetObject<UInputAction>(WalkFastAction, WalkFastActionPath);
-
-	FString Press1ActionPath = TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Press1.IA_Press1'");
-	CppMacro::GetObject<UInputAction>(Press1Action, Press1ActionPath);
-
-	FString Press2ActionPath = TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Press2.IA_Press2'");
-	CppMacro::GetObject<UInputAction>(Press2Action, Press2ActionPath);
+	CppMacro::GetObject<UInputMappingContext>(InputMappingContext, TEXT("InputMappingContext'/Game/Input/Default_IMC.Default_IMC'"));
+	
+	CppMacro::GetObject<UInputAction>(MoveAction, TEXT("InputAction'/Game/Input/IA_Move.IA_Move'"));
+	CppMacro::GetObject<UInputAction>(JumpAction, TEXT("InputAction'/Game/Input/IA_Jump.IA_Jump'"));
+	CppMacro::GetObject<UInputAction>(LookAction, TEXT("InputAction'/Game/Input/IA_Look.IA_Look'"));
+	CppMacro::GetObject<UInputAction>(AttackAction, TEXT("InputAction'/Game/Input/IA_Attack.IA_Attack'"));
+	CppMacro::GetObject<UInputAction>(SpecialAction, TEXT("InputAction'/Game/Input/IA_SpecialAction.IA_SpecialAction'"));
+	CppMacro::GetObject<UInputAction>(WalkSlowAction, TEXT("InputAction'/Game/Input/IA_WalkSlow.IA_WalkSlow'"));
+	CppMacro::GetObject<UInputAction>(WalkFastAction, TEXT("InputAction'/Game/Input/IA_WalkFast.IA_WalkFast'"));
+	CppMacro::GetObject<UInputAction>(Press1Action, TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Press1.IA_Press1'"));
+	CppMacro::GetObject<UInputAction>(Press2Action, TEXT("/Script/EnhancedInput.InputAction'/Game/Input/IA_Press2.IA_Press2'"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 
@@ -147,12 +132,13 @@ void AC_Player::Tick(float DeltaTime)
 	{
 		Target = nullptr;
 	}
-
-
+	
+	
+	// Crosshair Color Update
 	if (PlayerWeapon == EPlayerWeapon::Rifle)
 	{
 		// 바닥과 충돌은 제외
-		if (bHit && Target->GetName() == "Floor")
+		if (Target && Target->GetName() == "Floor")
 		{
 			Rifle->UpdateCrosshair(false);
 		}
@@ -195,6 +181,9 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		// Attack
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AC_Player::Attack);
+
+		// SpecialAction
+		EnhancedInputComponent->BindAction(SpecialAction, ETriggerEvent::Triggered, this, &AC_Player::SpecialAttack);
 
 		// Press1 (Sword)
 		EnhancedInputComponent->BindAction(Press1Action, ETriggerEvent::Started, this, &AC_Player::EquipSword);
@@ -290,7 +279,8 @@ void AC_Player::EquipRifle()
 		{
 			// 장착 해제
 			Rifle->UnEquip();
-			SpringArm->SetRelativeLocation(FVector(50, 50, 50));
+			SpringArm->SetRelativeLocation(FVector(0, 50, 50));
+			SpringArm->TargetArmLength = 400.0f;
 		}
 		// 해당 무기가 검이면
 		else if (PlayerWeapon == EPlayerWeapon::Sword)
@@ -309,7 +299,8 @@ void AC_Player::EquipRifle()
 		// 총을 장착
 		Rifle->Equip();
 
-		SpringArm->SetRelativeLocation(FVector(200, 50, 50));
+		SpringArm->SetRelativeLocation(FVector(0, 50, 50));
+		SpringArm->TargetArmLength = 300.0f;
 
 		// 무기를 장착 중이게 설정
 		bEquipWeapon = true;
@@ -343,6 +334,12 @@ void AC_Player::Attack()
 	if (PlayerWeapon == EPlayerWeapon::Unarmed) return;
 	else if (PlayerWeapon == EPlayerWeapon::Sword) Sword->Attack();
 	else if (PlayerWeapon == EPlayerWeapon::Rifle) Rifle->Attack(Trajectory);
+}
+
+void AC_Player::SpecialAttack()
+{
+	if (PlayerWeapon == EPlayerWeapon::Sword) Sword->SpecialAction();
+	else if (PlayerWeapon == EPlayerWeapon::Rifle) Rifle->SpecialAction();
 }
 
 FGenericTeamId AC_Player::GetGenericTeamId() const

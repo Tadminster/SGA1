@@ -2,10 +2,16 @@
 
 
 #include "C_AIController.h"
-#include "Characters/C_Enemy.h"
+
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "DrawDebugHelpers.h"
+
+#include "Characters/C_Enemy.h"
+#include "Characters/C_Player.h"
 
 #include "CppMacro.h"
 
@@ -15,13 +21,14 @@ AC_AIController::AC_AIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CppMacro::CreateActorComponet<UAIPerceptionComponent>(this, PerceptionComponent, "PerceptionComponent");
+	CppMacro::CreateActorComponet<UAIPerceptionComponent>(this, PerceptionComponent, TEXT("PerceptionComponent"));
+	CppMacro::CreateActorComponet<UBlackboardComponent>(this, BlackboardComponent, TEXT("BlackboardComponent"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
 	SightConfig->SightRadius = 1000.0f;		// 시야 거리
-	SightConfig->LoseSightRadius = 1200.0f;	// 시야를 잃는 거리
+	SightConfig->LoseSightRadius = 1400.0f;	// 시야를 잃는 거리
 	SightConfig->PeripheralVisionAngleDegrees = 60.0f;	// 시야각 (정면기준 60도 = 좌우120도)
-	SightConfig->SetMaxAge(5.0f);			// 시야가 사라지는 시간 (5초 뒤에 사라짐)
+	SightConfig->SetMaxAge(3.0f);			// 시야가 사라지는 시간 (3초 뒤에 사라짐)
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;		// 적 감지
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = false;	// 아군 감지
@@ -48,12 +55,9 @@ void AC_AIController::Tick(float DeltaTime)
 	if (bDrawDebugSightSphere)
 	{
 		FVector Center = GetPawn()->GetActorLocation() + GetPawn()->GetActorForwardVector() * AdjustSightRadius;
-		float Radius = SightConfig->SightRadius + AdjustSightRadius;
 
-		//DrawDebugSphere(GetWorld(), Center, Radius, 16, FColor::Red, false, 0.0f, 0, 1.0f);
-		//DrawDebugSphere(GetWorld(), Center, BehaviorRange, 16, FColor::Red, false, 0.0f, 0, 1.0f);
-
-		DrawDebugCircle(GetWorld(), Center, BehaviorRange, 16, FColor::Red, false, 0.0f, 0, 1.0f);
+		DrawDebugSphere(GetWorld(), Center, BehaviorRange, 16, FColor::Red, false, 0.0f, 0, 1.0f);
+		//DrawDebugCircle(GetWorld(), Center, BehaviorRange, 16, FColor::Red, false, 0.0f, 0, 0, FVector::RightVector, FVector::ForwardVector);
 	}
 }
 
@@ -65,6 +69,9 @@ void AC_AIController::OnPossess(APawn* InPawn)
 	if (OwnerEnemy)
 	{
 		PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AC_AIController::OnPerceptionUpdated);
+
+		UseBlackboard(OwnerEnemy->GetBehaviorTree()->BlackboardAsset, BlackboardComponent);
+		RunBehaviorTree(OwnerEnemy->GetBehaviorTree());
 	}
 }
 
@@ -80,6 +87,21 @@ void AC_AIController::OnUnPossess()
 	}
 }
 
+AC_Player* AC_AIController::GetTargetPlayer() const
+{
+	return Cast<AC_Player>(Blackboard->GetValueAsObject(TargetKey));
+}
+
+EBeHaviorState AC_AIController::GetState() const
+{
+	return (EBeHaviorState)Blackboard->GetValueAsEnum(BehaviorStateKey);
+}
+
+void AC_AIController::SetState(EBeHaviorState NewState)
+{
+	Blackboard->SetValueAsEnum(BehaviorStateKey, (uint8)NewState);
+}
+
 void AC_AIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
 	TArray<AActor*> Enemies; // 적 배열
@@ -88,6 +110,14 @@ void AC_AIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 	// nullptr을 넣으면 모든 적을 넣음
 	PerceptionComponent->GetCurrentlyPerceivedActors(nullptr, Enemies); 
 
+	// 가장 가까운 적을 찾음
+	AC_Player* TargetPlayer = nullptr;
+	for (AActor* Actor : Enemies)
+	{
+		TargetPlayer = Cast<AC_Player>(Actor);
+		if (TargetPlayer) break;
+	}
 
-
+	// 블랙보드에 타겟 플레이어를 넣음
+	Blackboard->SetValueAsObject(TargetKey, TargetPlayer);
 }

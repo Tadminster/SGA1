@@ -15,7 +15,11 @@ enum class EBeHaviorState : uint8
 
 
 class AC_Enemy;
+class AC_Player;
 class UAISenseConfig_Sight;
+class UAIPerceptionComponent;
+class UBlackboardComponent;
+
 
 /**
  * 
@@ -26,9 +30,10 @@ class SGA1_API AC_AIController : public AAIController
 	GENERATED_BODY()
 	
 private:
-	AC_Enemy* OwnerEnemy; // AI 소유자
-	UAISenseConfig_Sight* SightConfig; // AI 시야 설정
-	UAIPerceptionComponent* PerceptionComponent; // 인지 컴포넌트
+	AC_Enemy*				OwnerEnemy;				// AI 소유자
+	UAISenseConfig_Sight*	SightConfig;			// AI 시야 설정
+	UAIPerceptionComponent* PerceptionComponent;	// 인지 컴포넌트
+	UBlackboardComponent*	BlackboardComponent;	// 블랙보드 컴포넌트
 
 
 protected:
@@ -42,9 +47,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	FName TargetKey = "Target";
 	
-	// AI가 시야에 보이는 거리
+	// AI가 공격	할 수 있는 범위
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	float BehaviorRange = 500.0f;
+	float BehaviorRange = 200.0f;
 
 	// AI가 시야에 보이는지 체크하는 함수
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
@@ -55,9 +60,7 @@ protected:
 	float AdjustSightRadius = 100.0f;
 	
 
-private:
-	UFUNCTION() // AI 시야에 보이는지 체크하는 함수
-	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
 
 public:
 	AC_AIController();
@@ -69,5 +72,15 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override; // AI를 Possess(빙의)할 때 호출되는 함수
 	virtual void OnUnPossess() override;			// AI를 UnPossess(빙의 해제)할 때 호출되는 함수
+
+	FORCEINLINE FName GetTargetKey() const { return TargetKey; }; // 타겟 키를 반환하는 함수
+	AC_Player* GetTargetPlayer() const; // 타겟 플레이어를 반환하는 함수
+
+	EBeHaviorState GetState() const; // 현재 행동 상태를 반환하는 함수
+	void SetState(EBeHaviorState NewState); // 행동 상태를 설정하는 함수
+
+private:
+	UFUNCTION() // AI 시야에 보이는지 체크하는 함수
+		void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
 };

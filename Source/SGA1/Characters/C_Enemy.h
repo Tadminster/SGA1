@@ -21,15 +21,14 @@ protected:
 	UBehaviorTree* BehaviorTree;
 
 public:
-	// Sets default values for this character's properties
-	AC_Enemy();
+	float MeleeDistance = 100.f;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
+	AC_Enemy();
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void ChangeMeshColor_Implementation(const FLinearColor& Color) override;

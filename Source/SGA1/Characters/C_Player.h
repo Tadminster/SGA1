@@ -35,10 +35,6 @@ class SGA1_API AC_Player : public AC_Prototype, public II_Character, public IGen
 	GENERATED_BODY()
 
 protected:
-	// SkeletalMesh
-	//UPROPERTY(EditDefaultsOnly)
-	//USkeletalMesh* SkeletalMesh;
-
 	// SpringArm
 	UPROPERTY(EditDefaultsOnly)
 	USpringArmComponent* SpringArm;
@@ -75,6 +71,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AttackAction;
 
+	// SpecialAction IA
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SpecialAction;
+
 	// Press 1 IA
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* Press1Action;
@@ -97,7 +97,6 @@ protected:
 	uint8 TeamID{ 0 };
 
 private:
-	//AC_Sword*	Sword;
 	AC_Rifle*	Rifle;
 	FVector		Trajectory;		// Åºµµ(±ËÀû)
 	AActor*		Target;			// ¶óÀÌÇÃ °ø°Ý Å¸°Ù
@@ -134,6 +133,7 @@ public:
 	virtual void ChangeMeshColor_Implementation(const FLinearColor& Color) override;
 	//virtual AC_Sword* GetSword_Implementation() override;
 	virtual void Attack() override;
+	void SpecialAttack();
 
 	// Equip & Unequip Sword
 	void EquipSword();

@@ -9,6 +9,8 @@
 class UC_WB_Crosshair;
 class AC_Bullet;
 
+class AC_Player;
+
 UCLASS()
 class SGA1_API AC_Rifle : public AActor
 {
@@ -53,7 +55,7 @@ public:
 
 
 private:
-	class ACharacter* OwnerCharacter;
+	AC_Player* OwnerCharacter;
 
 public:	
 	// Sets default values for this actor's properties

@@ -10,4 +10,5 @@ AC_GameModeBase::AC_GameModeBase()
 	FString Path = TEXT("/Script/Engine.Blueprint'/Game/Scene2/Characters/BP_Player.BP_Player_C'");
 	CppMacro::GetClass(&DefaultPawnClass, Path);
 
+	// Set Monster AI
 }

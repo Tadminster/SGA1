@@ -11,6 +11,8 @@
 
 #include "C_Bullet.h"
 
+#include "Characters/C_Player.h"
+
 #include "CppMacro.h"
 
 
@@ -46,7 +48,7 @@ void AC_Rifle::BeginPlay()
 	Super::BeginPlay();
 
 	// Get Owner
-	OwnerCharacter = Cast<ACharacter>(GetOwner());
+	OwnerCharacter = Cast<AC_Player>(GetOwner());
 
 	// Spawn Crosshair
 	Crosshair = CreateWidget<UC_WB_Crosshair>(GetWorld(), CrosshairClass);
@@ -125,6 +127,6 @@ void AC_Rifle::Attack(FVector _Trajectory)
 
 void AC_Rifle::SpecialAction()
 {
-
+	//OwnerCharacter->Camera
 }
 

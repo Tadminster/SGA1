@@ -14,4 +14,9 @@ class SGA1_API UC_BTS_Melee : public UBTService
 {
 	GENERATED_BODY()
 	
+public:
+	UC_BTS_Melee();
+
+protected:
+	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

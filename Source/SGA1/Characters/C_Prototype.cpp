@@ -15,7 +15,6 @@ AC_Prototype::AC_Prototype()
 void AC_Prototype::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
