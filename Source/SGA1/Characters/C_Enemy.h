@@ -21,7 +21,11 @@ protected:
 	UBehaviorTree* BehaviorTree;
 
 public:
-	float MeleeDistance = 100.f;
+	float MeleeRange{ 100.f };
+
+	float SightRadius{ 1000.f };
+	float LoseSightRadius{ 1200.f };
+	float PeripheralVisionAngleDegrees{ 60.f };
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,4 +39,6 @@ public:
 	virtual void Attack() override;
 
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; };
+
+	bool IsAttackEnd() const;
 };

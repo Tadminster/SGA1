@@ -45,5 +45,11 @@ void AC_Enemy::ChangeMeshColor_Implementation(const FLinearColor& Color)
 
 void AC_Enemy::Attack()
 {
+	Sword->Attack();
+}
+
+bool AC_Enemy::IsAttackEnd() const
+{
+	return Sword->bCanAttack;
 }
 
