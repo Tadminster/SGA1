@@ -29,7 +29,7 @@ void AC_Enemy::BeginPlay()
 	Super::BeginPlay();
 	
 	Sword = AC_Sword::Spawn(this);
-	Sword->Equip();
+	Sword->GrabSword();
 }
 
 // Called every frame

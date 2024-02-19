@@ -21,7 +21,7 @@ protected:
 	UBehaviorTree* BehaviorTree;
 
 public:
-	float MeleeRange{ 100.f };
+	float MeleeRange{ 200.f };
 
 	float SightRadius{ 1000.f };
 	float LoseSightRadius{ 1200.f };

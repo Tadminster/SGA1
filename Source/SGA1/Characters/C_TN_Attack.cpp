@@ -9,6 +9,7 @@
 UC_TN_Attack::UC_TN_Attack()
 {
 	NodeName = TEXT("Attack");
+	bNotifyTick = true;
 }
 
 // 테스크가 실행될 때 한번 호출되는 함수
