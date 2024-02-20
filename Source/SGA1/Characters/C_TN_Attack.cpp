@@ -16,8 +16,8 @@ UC_TN_Attack::UC_TN_Attack()
 EBTNodeResult::Type UC_TN_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
-	AC_AIController* AIController = Cast<AC_AIController>(OwnerComp.GetAIOwner());
 
+	AC_AIController* AIController = Cast<AC_AIController>(OwnerComp.GetAIOwner());
 	if (AIController)
 	{
 		AC_Enemy* OwnerEnemy = Cast<AC_Enemy>(AIController->GetPawn());

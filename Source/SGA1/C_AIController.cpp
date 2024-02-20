@@ -21,8 +21,8 @@ AC_AIController::AC_AIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CppMacro::CreateActorComponet<UAIPerceptionComponent>(this, PerceptionComponent, TEXT("PerceptionComponent"));
-	CppMacro::CreateActorComponet<UBlackboardComponent>(this, BlackboardComponent, TEXT("BlackboardComponent"));
+	CppMacro::CreateActorComponent<UAIPerceptionComponent>(this, PerceptionComponent, TEXT("PerceptionComponent"));
+	CppMacro::CreateActorComponent<UBlackboardComponent>(this, BlackboardComponent, TEXT("BlackboardComponent"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;		// Àû °¨Áö
