@@ -39,14 +39,14 @@ AC_Player::AC_Player():
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0)); // Pitch, Yaw, Roll
 
 	// SpringArm
-	CppMacro::CreateComponet<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
+	CppMacro::CreateComponent<USpringArmComponent>(this, SpringArm, TEXT("SpringArm"), GetCapsuleComponent());
 	SpringArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	SpringArm->bUsePawnControlRotation = true; // Rotate the arm based on the controlle
 	SpringArm->SetRelativeLocation(FVector(0, 50, 50));
 	SpringArm->SetRelativeRotation(FRotator(-20, 0, 0));
 	
 	// Camera
-	CppMacro::CreateComponet<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
+	CppMacro::CreateComponent<UCameraComponent>(this, Camera, TEXT("Camera"), SpringArm);
 
 
 	// Animation

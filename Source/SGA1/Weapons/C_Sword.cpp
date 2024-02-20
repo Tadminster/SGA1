@@ -18,8 +18,8 @@ AC_Sword::AC_Sword() :
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CppMacro::CreateComponet(this, Root, TEXT("Root"));
-	CppMacro::CreateComponet(this, SkeletalMeshComponent, TEXT("Mesh"), Root);
+	CppMacro::CreateComponent(this, Root, TEXT("Root"));
+	CppMacro::CreateComponent(this, SkeletalMeshComponent, TEXT("Mesh"), Root);
 
 	FString SkeletalMeshPath = TEXT("SkeletalMesh'/Game/InfinityBladeWeapons/Weapons/Blade/Silly_Weapons/Blade_Balloon/SK_Blade_Balloon.SK_Blade_Balloon'");
 	CppMacro::GetObject<USkeletalMesh>(SkeletalMesh, SkeletalMeshPath);

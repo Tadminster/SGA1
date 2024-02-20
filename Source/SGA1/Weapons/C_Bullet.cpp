@@ -12,7 +12,7 @@ AC_Bullet::AC_Bullet()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Mesh
-	CppMacro::CreateComponet(this, Mesh, TEXT("BulletMesh"), RootComponent);
+	CppMacro::CreateComponent(this, Mesh, TEXT("BulletMesh"), RootComponent);
 	Mesh->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
 	RootComponent = Mesh;
 

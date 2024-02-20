@@ -23,8 +23,8 @@ AC_Rifle::AC_Rifle()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Root, Mesh
-	CppMacro::CreateComponet(this, Root, TEXT("Root"));
-	CppMacro::CreateComponet(this, SkeletalMeshComponent, TEXT("Mesh"), Root);
+	CppMacro::CreateComponent(this, Root, TEXT("Root"));
+	CppMacro::CreateComponent(this, SkeletalMeshComponent, TEXT("Mesh"), Root);
 	
 	// Skeletal Mesh
 	CppMacro::GetObject<USkeletalMesh>(SkeletalMesh, TEXT("/Script/Engine.SkeletalMesh'/Game/FPWeapon/Mesh/SK_FPGun.SK_FPGun'"));

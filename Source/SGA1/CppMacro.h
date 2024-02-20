@@ -25,7 +25,7 @@ namespace CppMacro
 	}
 
 	template<typename T>
-	static void CreateComponet(AActor* Actor, T*& Component, const FName& Name, USceneComponent* Parent = nullptr)
+	static void CreateComponent(AActor* Actor, T*& Component, const FName& Name, USceneComponent* Parent = nullptr)
 	{
 		Component = Actor->CreateDefaultSubobject<T>(Name);
 
@@ -34,7 +34,7 @@ namespace CppMacro
 	}
 
 	template<typename T>
-	static void CreateActorComponet(AActor* Actor, T*& Component, const FName& Name)
+	static void CreateActorComponent(AActor* Actor, T*& Component, const FName& Name)
 	{
 		Component = Actor->CreateDefaultSubobject<T>(Name);
 	}
