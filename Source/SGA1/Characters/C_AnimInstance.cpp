@@ -24,7 +24,7 @@ void UC_AnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	PlayerWeaponState = (int)(Owner->GetPlayerWeaponState());
 
-	// ÃÑ±â ¹æÇâ º¸°£
+	// ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	{
 		FRotator TempTarget = UKismetMathLibrary::NormalizedDeltaRotator(Owner->GetControlRotation(), Owner->GetActorRotation());
 		TempTarget.Yaw = UKismetMathLibrary::ClampAngle(TempTarget.Yaw, -90.f, 90.f);
